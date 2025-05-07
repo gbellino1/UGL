@@ -1,5 +1,6 @@
 from flask import Flask
-import undetected_chromedriver as uc
+import chromedriver_autoinstaller
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
@@ -23,6 +24,16 @@ def ejecutar_busqueda():
 
 
 def buscar_ugl():
+    # Instala automáticamente el chromedriver correcto si no está
+    chromedriver_autoinstaller.install()
+
+    opciones = webdriver.ChromeOptions()
+    opciones.add_argument('--headless')
+    opciones.add_argument('--no-sandbox')
+    opciones.add_argument('--disable-dev-shm-usage')
+    opciones.add_argument('--disable-gpu')
+    opciones.add_argument('--window-size=1920,1080')
+
     palabras_clave = ['kit', 'neuro', 'neurocirugía', 'estimulador', 'batería',
                       'electrodos', 'neuroestimulador', 'bomba', 'intratecal']
 
@@ -38,40 +49,29 @@ def buscar_ugl():
     for destino in destinos:
         print(f"\n🔍 Buscando en: {destino}")
 
-        options = uc.ChromeOptions()
-        options.headless = True  #forma correcta para headless
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--window-size=1920,1080")
-
-driver = uc.Chrome(options=options)
+        driver = webdriver.Chrome(options=opciones)
         wait = WebDriverWait(driver, 10)
 
         try:
             driver.get("https://prestadores.pami.org.ar/result.php?c=7-5&par=2")
 
-            # Seleccionar UGL
             select_destino = Select(wait.until(EC.presence_of_element_located((By.ID, "destino_compra"))))
             select_destino.select_by_visible_text(destino)
 
-            # Fecha desde
             campo_desde = driver.find_element(By.ID, 'fecha_post')
             campo_desde.click()
             wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'ui-datepicker-calendar')))
             dia_element = driver.find_element(By.XPATH, f"//a[text()='{fecha_busqueda}']")
             dia_element.click()
 
-            # Fecha hasta
             campo_hasta = driver.find_element(By.ID, 'fecha_ant')
             campo_hasta.click()
             wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'ui-datepicker-calendar')))
             dia_element_hasta = driver.find_element(By.XPATH, f"//a[text()='{fecha_busqueda}']")
             dia_element_hasta.click()
 
-            # Click en Buscar
             driver.find_element(By.ID, 'srchBtn').click()
 
-            # Leer tabla de resultados
             try:
                 wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="resultados"]/table')))
                 tabla = driver.find_element(By.XPATH, '//*[@id="resultados"]/table')
