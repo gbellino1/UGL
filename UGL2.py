@@ -1,10 +1,8 @@
 from flask import Flask
-from selenium import webdriver
+import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
 
 import os
 import datetime
@@ -25,8 +23,6 @@ def ejecutar_busqueda():
 
 
 def buscar_ugl():
-    CHROMEDRIVER_PATH = './chromedriver'  # O la ruta donde esté ubicado
-
     palabras_clave = ['kit', 'neuro', 'neurocirugía', 'estimulador', 'batería',
                       'electrodos', 'neuroestimulador', 'bomba', 'intratecal']
 
@@ -42,18 +38,19 @@ def buscar_ugl():
     for destino in destinos:
         print(f"\n🔍 Buscando en: {destino}")
 
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--window-size=1920,1080")
-        chrome_options.add_argument("--disable-gpu")
-        service = Service(executable_path=CHROMEDRIVER_PATH, log_path=os.devnull)
-        driver = webdriver.Chrome(service=service, options=chrome_options)
+        options = uc.ChromeOptions()
+        options.add_argument("--headless")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--window-size=1920,1080")
 
-        driver.get("https://prestadores.pami.org.ar/result.php?c=7-5&par=2")
+        driver = uc.Chrome(options=options)
         wait = WebDriverWait(driver, 10)
 
         try:
-            # UGL destino
+            driver.get("https://prestadores.pami.org.ar/result.php?c=7-5&par=2")
+
+            # Seleccionar UGL
             select_destino = Select(wait.until(EC.presence_of_element_located((By.ID, "destino_compra"))))
             select_destino.select_by_visible_text(destino)
 
@@ -71,9 +68,10 @@ def buscar_ugl():
             dia_element_hasta = driver.find_element(By.XPATH, f"//a[text()='{fecha_busqueda}']")
             dia_element_hasta.click()
 
-            # Buscar
+            # Click en Buscar
             driver.find_element(By.ID, 'srchBtn').click()
 
+            # Leer tabla de resultados
             try:
                 wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="resultados"]/table')))
                 tabla = driver.find_element(By.XPATH, '//*[@id="resultados"]/table')
