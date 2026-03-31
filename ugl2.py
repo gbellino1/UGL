@@ -37,10 +37,13 @@ def configurar_driver():
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
-    options.add_argument("--window-size=1920,1080")
-    # En la nube no usamos .exe, usamos el driver automático
-    service = Service(ChromeDriverManager().install())
-    return webdriver.Chrome(service=service, options=options)
+    
+    # IMPORTANTE: En Streamlit Cloud, Chromium se instala en esta ruta
+    options.binary_location = "/usr/bin/chromium"
+    
+    # Ya no necesitamos Service(ChromeDriverManager().install())
+    # porque el driver viene en el paquete 'chromium-driver'
+    return webdriver.Chrome(options=options)
 
 # --- Interfaz de Streamlit ---
 if st.button('🚀 Iniciar Búsqueda en PAMI'):
