@@ -52,7 +52,7 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
     
     hoy_dia = (datetime.datetime.now()).day
     # Ajustado a 1 día para búsqueda estándar, puedes cambiarlo
-    mañana_dia = (datetime.datetime.now() + datetime.timedelta(days=1)).day 
+    mañana_dia = (datetime.datetime.now() + datetime.timedelta(days=5)).day 
 
     driver = configurar_driver()
     
