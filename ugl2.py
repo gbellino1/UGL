@@ -64,8 +64,8 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
     progreso = st.progress(0)
     
     hoy_dia = (datetime.datetime.now()).day
-    # Ajustado a 1 día para búsqueda estándar, puedes cambiarlo
     mañana_dia = (datetime.datetime.now() + datetime.timedelta(days=5)).day 
+	anio_actual = str(datetime.datetime.now().year)
 
     driver = configurar_driver()
     
@@ -103,35 +103,33 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
 
                 for fila in filas:
                             columnas = fila.find_elements(By.TAG_NAME, 'td')
-                            if len(columnas) >= 5:
-                                detalle_texto = columnas[4].text.lower().strip()
-                                
-                                # Verificamos si alguna palabra clave (bomba, neuro, etc.) está en el detalle
-                                if any(palabra in detalle_texto for palabra in palabras_clave):
-                                    # Extraemos Número y Año (ej: "423/2026")
-                                    nro_completo = columnas[0].text.strip()
-                                    partes = nro_completo.split('/')
-                                    nro_solo = partes[0]
-                                    anio_solo = partes[1] if len(partes) > 1 else "2026"
+            				if len(columnas) >= 5:
+              				  	detalle_texto = columnas[4].text.lower().strip()
                 
-                                    # Obtenemos configuración según el 'destino' del loop principal
-                                    conf = config_ugls.get(destino, {"cod": "9", "ext": "pdf"})
-                                    cod_ugl = conf["cod"]
-                                    ext = conf["ext"]
-                
-                                    # Construimos los dos links posibles (v1 y v2)
-                                    base_url = "https://institucional.pami.org.ar/compras/archivos"
-                                    link_v1 = f"{base_url}/CAB_{nro_solo}_{anio_solo}_{cod_ugl}_1.{ext}"
-                                    link_v2 = f"{base_url}/CAB_{nro_solo}_{anio_solo}_{cod_ugl}_2.{ext}"
-                
-                                    todos_los_resultados.append({
-                                        "Número": nro_completo,
-                                        "UGL": columnas[2].text.strip(),
-                                        "Detalle": columnas[4].text.strip(),
-                                        "Fecha": columnas[5].text.strip(),
-                                        "Link Principal": link_v1,
-                                        "Link Alternativo": link_v2
-                                    })
+                				if any(palabra in detalle_texto for palabra in palabras_clave):
+                    			# Extraemos el número (ej: "423/26" o "423/2026")
+                    				nro_completo = columnas[0].text.strip()
+                    				nro_solo = nro_completo.split('/')[0]
+                                    anio_solo = anio_actual 
+				
+				                    # Obtenemos configuración de la UGL
+				                    conf = config_ugls.get(destino, {"cod": "9", "ext": "pdf"})
+				                    cod_ugl = conf["cod"]
+				                    ext = conf["ext"]
+				
+				                    # Construimos los links con el año de 4 dígitos
+				                    base_url = "https://institucional.pami.org.ar/compras/archivos"
+				                    link_v1 = f"{base_url}/CAB_{nro_solo}_{anio_solo}_{cod_ugl}_1.{ext}"
+				                    link_v2 = f"{base_url}/CAB_{nro_solo}_{anio_solo}_{cod_ugl}_2.{ext}"
+				
+				                    todos_los_resultados.append({
+				                        "Número": nro_completo,
+				                        "UGL": columnas[2].text.strip(),
+				                        "Detalle": columnas[4].text.strip(),
+				                        "Fecha": columnas[5].text.strip(),
+				                        "Link Principal": link_v1,
+				                        "Link Alternativo": link_v2
+                    })
 
             except:
                 continue
