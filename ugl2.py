@@ -23,7 +23,7 @@ palabras_clave = [
     'epidural','ganglio','corriente','cerebral','electrodo','profundo'
 ]
 
-destinos = ["UGL IX Rosario", "UGL II Corrientes"]
+destinos = ["UGL IX Rosario", "UGL XIV Entre Ríos", "UGL XV Santa Fé", "UGL XXXIV Concordia"]
 
 config_ugls = {
     "UGL II Corrientes": {"cod": "2", "ext": "docx"},
