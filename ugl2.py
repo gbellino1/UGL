@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import datetime
 import pandas as pd
-anio_actual = "2026"
+#anio_actual = "2026"
 # Configuración de la página
 st.set_page_config(page_title="Buscador Licitaciones UGL", layout="wide")
 st.title("🔎 Monitoreo de Licitaciones PAMI")
@@ -111,7 +111,7 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
 							# Extraemos el número y año
 							nro_completo = columnas[0].text.strip()
 							nro_solo = nro_completo.split('/')[0]
-							anio_solo = anio_actual 
+							#anio_solo = anio_actual 
 							
 							# Configuración de la UGL
 							conf = config_ugls.get(destino, {"cod": "9", "ext": "pdf"})
@@ -120,8 +120,8 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
 							
 							# Construcción de links
 							base_url = "https://institucional.pami.org.ar/compras/archivos"
-							link_v1 = f"{base_url}/CAB_{nro_solo}_{anio_solo}_{cod_ugl}_1.{ext}"
-							link_v2 = f"{base_url}/CAB_{nro_solo}_{anio_solo}_{cod_ugl}_2.{ext}"
+							link_v1 = f"{base_url}/CAB_{nro_solo}_2026_{cod_ugl}_1.{ext}"
+							link_v2 = f"{base_url}/CAB_{nro_solo}_2026_{cod_ugl}_2.{ext}"
 							
 							todos_los_resultados.append({
 								"Número": nro_completo,
