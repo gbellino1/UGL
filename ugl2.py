@@ -65,7 +65,7 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
     
     hoy_dia = (datetime.datetime.now()).day
     mañana_dia = (datetime.datetime.now() + datetime.timedelta(days=5)).day 
-	anio_actual = (datetime.datetime.now()).year
+	anio_actual = "2026"
 
     driver = configurar_driver()
     
