@@ -102,7 +102,7 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
                 filas = tabla.find_elements(By.TAG_NAME, 'tr')
 				
 
-				for fila in filas:
+			for fila in filas:
 					columnas = fila.find_elements(By.TAG_NAME, 'td')
 					if len(columnas) >= 5:
 						detalle_texto = columnas[4].text.lower().strip()
