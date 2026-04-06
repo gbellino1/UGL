@@ -102,35 +102,35 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
                 filas = tabla.find_elements(By.TAG_NAME, 'tr')
 				
 
-			for fila in filas:
-                columnas = fila.find_elements(By.TAG_NAME, 'td')
-                if len(columnas) >= 5:
-                    detalle_texto = columnas[4].text.lower().strip()
-                        
-                    if any(palabra in detalle_texto for palabra in palabras_clave):
-                         # Extraemos el número (ej: "423/26")
-                        nro_completo = columnas[0].text.strip()
-                        nro_solo = nro_completo.split('/')[0]
-                        anio_solo = anio_actual 
-                        
-                        # Obtenemos configuración de la UGL
-                        conf = config_ugls.get(destino, {"cod": "9", "ext": "pdf"})
-                        cod_ugl = conf["cod"]
-                        ext = conf["ext"]
-                        
-                        # Construimos los links
-                        base_url = "https://institucional.pami.org.ar/compras/archivos"
-                        link_v1 = f"{base_url}/CAB_{nro_solo}_{anio_solo}_{cod_ugl}_1.{ext}"
-                        link_v2 = f"{base_url}/CAB_{nro_solo}_{anio_solo}_{cod_ugl}_2.{ext}"
-                            
-                        todos_los_resultados.append({
-                            "Número": nro_completo,
-                            "UGL": columnas[2].text.strip(),
-                            "Detalle": columnas[4].text.strip(),
-                            "Fecha": columnas[5].text.strip(),
-                            "Link Principal": link_v1,
-                            "Link Alternativo": link_v2
-                        })
+				for fila in filas:
+					columnas = fila.find_elements(By.TAG_NAME, 'td')
+					if len(columnas) >= 5:
+						detalle_texto = columnas[4].text.lower().strip()
+						
+						if any(palabra in detalle_texto for palabra in palabras_clave):
+							# Extraemos el número y año
+							nro_completo = columnas[0].text.strip()
+							nro_solo = nro_completo.split('/')[0]
+							anio_solo = anio_actual 
+							
+							# Configuración de la UGL
+							conf = config_ugls.get(destino, {"cod": "9", "ext": "pdf"})
+							cod_ugl = conf["cod"]
+							ext = conf["ext"]
+							
+							# Construcción de links
+							base_url = "https://institucional.pami.org.ar/compras/archivos"
+							link_v1 = f"{base_url}/CAB_{nro_solo}_{anio_solo}_{cod_ugl}_1.{ext}"
+							link_v2 = f"{base_url}/CAB_{nro_solo}_{anio_solo}_{cod_ugl}_2.{ext}"
+							
+							todos_los_resultados.append({
+								"Número": nro_completo,
+								"UGL": columnas[2].text.strip(),
+								"Detalle": columnas[4].text.strip(),
+								"Fecha": columnas[5].text.strip(),
+								"Link Principal": link_v1,
+								"Link Alternativo": link_v2
+							})
             except:
                 continue
 
