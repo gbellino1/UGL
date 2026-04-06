@@ -25,11 +25,12 @@ palabras_clave = [
     'epidural','ganglio','corriente','cerebral','electrodo','profundo'
 ]
 
-destinos = [
-    "UGL II Corrientes", "UGL IX Rosario", "UGL XIII Chaco",
-    "UGL XIV Entre Ríos", "UGL XV Santa Fé", "UGL XVIII Misiones",
-    "UGL XXIII Formosa", "UGL XXXIV Concordia"
-]
+destinos = ["UGL IX Rosario","UGL II Corrientes"]
+#destinos = [
+ #   "UGL II Corrientes", "UGL IX Rosario", "UGL XIII Chaco",
+  #  "UGL XIV Entre Ríos", "UGL XV Santa Fé", "UGL XVIII Misiones",
+   # "UGL XXIII Formosa", "UGL XXXIV Concordia"
+#]
 
 def configurar_driver():
     options = Options()
@@ -88,17 +89,28 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
                 tabla = driver.find_element(By.XPATH, '//*[@id="resultados"]/table')
                 filas = tabla.find_elements(By.TAG_NAME, 'tr')
 
+
                 for fila in filas:
                     columnas = fila.find_elements(By.TAG_NAME, 'td')
-                    if len(columnas) >= 5:
+                        # Aumentamos a 7 para asegurar que existan Fecha y Link
+                    if len(columnas) >= 7:
                         detalle_texto = columnas[4].text.lower().strip()
                         if any(palabra in detalle_texto for palabra in palabras_clave):
+                            # Extraemos el link del elemento <a> dentro de la columna 6
+                            try:
+                                link_elemento = columnas[6].find_element(By.TAG_NAME, 'a')
+                                link_url = link_elemento.get_attribute('href')
+                            except:
+                                link_url = "No disponible"
+
                             todos_los_resultados.append({
-                                "Número": columnas[0].text.strip(),
-                                "UGL": columnas[2].text.strip(),
-                                "Destino": destino,
-                                "Detalle": columnas[4].text.strip()
+                            "Número": columnas[0].text.strip(),
+                            "UGL": columnas[2].text.strip(),
+                            "Detalle": columnas[4].text.strip(),
+                            "Fecha": columnas[5].text.strip(),
+                            "Link": link_url
                             })
+
             except:
                 continue
 
