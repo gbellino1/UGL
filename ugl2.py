@@ -65,7 +65,7 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
     
     hoy_dia = (datetime.datetime.now()).day
     mañana_dia = (datetime.datetime.now() + datetime.timedelta(days=5)).day 
-	
+	anio_actual = (datetime.datetime.now()).year
 
     driver = configurar_driver()
     
@@ -100,7 +100,7 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
                 wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="resultados"]/table')))
                 tabla = driver.find_element(By.XPATH, '//*[@id="resultados"]/table')
                 filas = tabla.find_elements(By.TAG_NAME, 'tr')
-				anio_actual = str(datetime.datetime.now().year)
+				
 
                 for fila in filas:
                             columnas = fila.find_elements(By.TAG_NAME, 'td')
