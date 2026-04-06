@@ -121,7 +121,7 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
         if todos_los_resultados:
             st.success(f"¡Se encontraron {len(todos_los_resultados)} coincidencias!")
             df = pd.DataFrame(todos_los_resultados)
-            st.dataframe(df, use_container_width=True)
+            st.table(df)
         else:
             st.info("No se encontraron licitaciones con esas palabras clave.")
 
