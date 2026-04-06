@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import datetime
 import pandas as pd
-
+anio_actual = "2026"
 # Configuración de la página
 st.set_page_config(page_title="Buscador Licitaciones UGL", layout="wide")
 st.title("🔎 Monitoreo de Licitaciones PAMI")
@@ -65,7 +65,7 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
     
     hoy_dia = (datetime.datetime.now()).day
     mañana_dia = (datetime.datetime.now() + datetime.timedelta(days=5)).day 
-	anio_actual = "2026"
+	
 
     driver = configurar_driver()
     
