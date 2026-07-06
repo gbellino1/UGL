@@ -39,13 +39,17 @@ config_ugls = {
 
 def configurar_driver():
     options = Options()
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")  # Usamos el modo headless moderno
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     
-    # Eliminamos la ruta fija binaria para que Selenium lo maneje de forma automática e inteligente
-    return webdriver.Chrome(options=options)
+    # Forzamos las rutas exactas donde el sistema operativo instala Chromium y su Driver
+    options.binary_location = "/usr/bin/chromium-browser"
+    
+    service = Service("/usr/bin/chromedriver")
+    
+    return webdriver.Chrome(service=service, options=options)
 
 # --- Interfaz de Streamlit ---
 if st.button('🚀 Iniciar Búsqueda en PAMI'):
