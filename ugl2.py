@@ -42,7 +42,8 @@ def configurar_driver():
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
-    options.binary_location = "/usr/bin/chromium"
+    
+    # Eliminamos la ruta fija binaria para que Selenium lo maneje de forma automática e inteligente
     return webdriver.Chrome(options=options)
 
 # --- Interfaz de Streamlit ---
@@ -52,7 +53,7 @@ if st.button('🚀 Iniciar Búsqueda en PAMI'):
     
     hoy = datetime.datetime.now()
     hoy_dia = hoy.day
-    mañana_dia = (hoy + datetime.timedelta(days=3)).day 
+    mañana_dia = (hoy + datetime.timedelta(days=7)).day 
 
     driver = configurar_driver()
     
