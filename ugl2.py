@@ -36,20 +36,18 @@ config_ugls = {
 
 def configurar_driver():
     options = Options()
-    # El modo headless=new es el estándar moderno que evita muchos crasheos
-    options.add_argument("--headless=new")
+    # Usamos el modo headless clásico que es más estable en servidores Linux básicos
+    options.add_argument("--headless")
     
-    # Banderas obligatorias para servidores Linux/Docker como Streamlit Cloud
+    # Banderas críticas de aislamiento para evitar el "Chrome instance exited"
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
-    options.add_argument("--window-size=1920x1080")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--window-size=1920,1080")
     
-    # Apuntamos DIRECTAMENTE a donde Streamlit instala los paquetes de packages.txt
-    options.binary_location = "/usr/bin/chromium"
-    service = Service("/usr/bin/chromedriver")
-    
-    return webdriver.Chrome(service=service, options=options)
+    # Dejamos que Selenium encuentre automáticamente las rutas del entorno
+    return webdriver.Chrome(options=options)
 
 # --- Interfaz de Streamlit ---
 if st.button('🚀 Iniciar Búsqueda en PAMI'):
