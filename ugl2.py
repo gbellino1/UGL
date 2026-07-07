@@ -1,10 +1,5 @@
 import streamlit as st
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait, Select
-from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.core.os_manager import ChromeType # <- IMPORTANTE
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import datetime
@@ -41,15 +36,18 @@ config_ugls = {
 
 def configurar_driver():
     options = Options()
-    options.add_argument("--headless")
+    # El modo headless=new es el estándar moderno que evita muchos crasheos
+    options.add_argument("--headless=new")
+    
+    # Banderas obligatorias para servidores Linux/Docker como Streamlit Cloud
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
-    options.add_argument("--window-size=1920,1080") # Ayuda a evitar errores de memoria en la nube
+    options.add_argument("--window-size=1920x1080")
     
-    # Esto busca el Chromium de Linux y descarga el driver perfecto para esa versión
-    driver_path = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
-    service = Service(driver_path)
+    # Apuntamos DIRECTAMENTE a donde Streamlit instala los paquetes de packages.txt
+    options.binary_location = "/usr/bin/chromium"
+    service = Service("/usr/bin/chromedriver")
     
     return webdriver.Chrome(service=service, options=options)
 
