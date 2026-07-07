@@ -1,4 +1,5 @@
 import streamlit as st
+import shutil
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -36,18 +37,32 @@ config_ugls = {
 
 def configurar_driver():
     options = Options()
-    # Usamos el modo headless clásico que es más estable en servidores Linux básicos
-    options.add_argument("--headless")
     
-    # Banderas críticas de aislamiento para evitar el "Chrome instance exited"
+    # Volvemos al modo headless clásico (el 'new' a veces rompe Chromium en Debian)
+    options.add_argument("--headless") 
+    
+    # Banderas de máxima estabilidad para evitar que la instancia se cierre ("exited")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
-    options.add_argument("--disable-extensions")
-    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--disable-features=NetworkService")
+    options.add_argument("--disable-features=VizDisplayCompositor")
+    options.add_argument("--window-size=1920x1080")
     
-    # Dejamos que Selenium encuentre automáticamente las rutas del entorno
-    return webdriver.Chrome(options=options)
+    # Buscamos dinámicamente dónde instaló Streamlit los ejecutables
+    chromium_path = shutil.which("chromium") or shutil.which("chromium-browser")
+    driver_path = shutil.which("chromedriver")
+    
+    # Asignamos las rutas solo si el sistema las encuentra
+    if chromium_path:
+        options.binary_location = chromium_path
+        
+    if driver_path:
+        service = Service(driver_path)
+        return webdriver.Chrome(service=service, options=options)
+    else:
+        # Modo fallback por si falla la búsqueda del driver
+        return webdriver.Chrome(options=options)
 
 # --- Interfaz de Streamlit ---
 if st.button('🚀 Iniciar Búsqueda en PAMI'):
