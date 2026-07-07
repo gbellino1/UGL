@@ -37,25 +37,25 @@ config_ugls = {
 
 def configurar_driver():
     options = Options()
-    
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--disable-extensions")
     
-    # Esta bandera es la solución mágica para el "Chrome instance exited" en la nube
-    options.add_argument("--remote-debugging-port=9222") 
+    # 🌟 LA BANDERA CLAVE: Fuerza a Chrome a correr en un solo proceso
+    # Esto evita que el contenedor de Streamlit lo mate al intentar abrir hilos de fondo
+    options.add_argument("--single-process")
+    options.add_argument("--remote-debugging-port=9222")
+    options.add_argument("--disable-features=VizDisplayCompositor")
     
-    # Obligamos a Selenium a ignorar cualquier caché y usar la instalación limpia
+    # Redireccionamos toda la escritura de caché a /tmp para evitar bloqueos de permisos
+    options.add_argument("--user-data-dir=/tmp/chrome-user-data")
+    options.add_argument("--data-path=/tmp/chrome-data-path")
+    options.add_argument("--disk-cache-dir=/tmp/chrome-disk-cache")
+    
+    # Apuntamos a los binarios nativos del packages.txt
     options.binary_location = "/usr/bin/chromium"
-    
-    # Aplicamos el fix de permisos que sugiere la documentación de Selenium
-    try:
-        os.system("chmod +x /usr/bin/chromedriver")
-    except:
-        pass
-        
     service = Service("/usr/bin/chromedriver")
     
     return webdriver.Chrome(service=service, options=options)
