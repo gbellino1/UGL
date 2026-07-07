@@ -1,5 +1,5 @@
 import streamlit as st
-import shutil
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -38,31 +38,27 @@ config_ugls = {
 def configurar_driver():
     options = Options()
     
-    # Volvemos al modo headless clásico (el 'new' a veces rompe Chromium en Debian)
-    options.add_argument("--headless") 
-    
-    # Banderas de máxima estabilidad para evitar que la instancia se cierre ("exited")
+    options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
-    options.add_argument("--disable-features=NetworkService")
-    options.add_argument("--disable-features=VizDisplayCompositor")
-    options.add_argument("--window-size=1920x1080")
+    options.add_argument("--disable-extensions")
     
-    # Buscamos dinámicamente dónde instaló Streamlit los ejecutables
-    chromium_path = shutil.which("chromium") or shutil.which("chromium-browser")
-    driver_path = shutil.which("chromedriver")
+    # Esta bandera es la solución mágica para el "Chrome instance exited" en la nube
+    options.add_argument("--remote-debugging-port=9222") 
     
-    # Asignamos las rutas solo si el sistema las encuentra
-    if chromium_path:
-        options.binary_location = chromium_path
+    # Obligamos a Selenium a ignorar cualquier caché y usar la instalación limpia
+    options.binary_location = "/usr/bin/chromium"
+    
+    # Aplicamos el fix de permisos que sugiere la documentación de Selenium
+    try:
+        os.system("chmod +x /usr/bin/chromedriver")
+    except:
+        pass
         
-    if driver_path:
-        service = Service(driver_path)
-        return webdriver.Chrome(service=service, options=options)
-    else:
-        # Modo fallback por si falla la búsqueda del driver
-        return webdriver.Chrome(options=options)
+    service = Service("/usr/bin/chromedriver")
+    
+    return webdriver.Chrome(service=service, options=options)
 
 # --- Interfaz de Streamlit ---
 if st.button('🚀 Iniciar Búsqueda en PAMI'):
